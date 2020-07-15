@@ -1,0 +1,3 @@
+rootProject.name='ypp-fastclick-android'
+include ':app'
+include ':debounce'
