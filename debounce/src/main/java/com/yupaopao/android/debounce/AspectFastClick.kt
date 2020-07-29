@@ -13,7 +13,7 @@ import org.aspectj.lang.reflect.MethodSignature
 class AspectFastClick {
 
     companion object {
-        const val FAST_CLICK_INTERVAL = 1000L
+        const val FAST_CLICK_INTERVAL = 200L
         private const val ON_CLICK_POINTCUTS =
             "execution(* android.view.View.OnClickListener.onClick(..))"
         private const val ON_CLICK_IN_XML_POINTCUTS =
@@ -36,7 +36,6 @@ class AspectFastClick {
 
     @Around("onClickPointcuts()")
     fun around(joinPoint: ProceedingJoinPoint) {
-        Log.i("AspectFastClick", "around")
         val signature = joinPoint.signature as MethodSignature
         val method = signature.method
         if (method.isAnnotationPresent(Except::class.java)) {

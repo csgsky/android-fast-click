@@ -15,7 +15,7 @@ class Utils {
             return if (currentClickTime - lastClickTime < interval) {
                 true
             } else {
-                view.setTag(key, currentClickTime);
+                view.setTag(key, currentClickTime)
                 false
             }
         }
