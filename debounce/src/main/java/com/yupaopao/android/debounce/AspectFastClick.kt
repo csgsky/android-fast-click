@@ -13,13 +13,16 @@ import org.aspectj.lang.reflect.MethodSignature
 class AspectFastClick {
 
     companion object {
-        const val FAST_CLICK_INTERVAL = 200L
+        const val FAST_CLICK_INTERVAL = 1200L
         private const val ON_CLICK_POINTCUTS =
             "execution(* android.view.View.OnClickListener.onClick(..))"
         private const val ON_CLICK_IN_XML_POINTCUTS =
             "execution(* android.support.v7.app.AppCompatViewInflater.DeclaredOnClickListener.onClick(..))"
         private const val ON_CLICK_IN_BUTTER_KNIFE_POINTCUTS =
             "execution(@butterknife.OnClick * *(..))"
+
+        private const val ON_CLICK_ANNO =
+            "execution(@com.yupaopao.android.debounce.SingleClick * *(..))"
     }
 
     @Pointcut(ON_CLICK_POINTCUTS)
@@ -33,6 +36,11 @@ class AspectFastClick {
     @Pointcut(ON_CLICK_IN_BUTTER_KNIFE_POINTCUTS)
     fun onClickInButterKnifePointcuts() {
     }
+
+    @Pointcut(ON_CLICK_ANNO)
+    fun methodAnnotated() {
+    }
+
 
     @Around("onClickPointcuts()")
     fun around(joinPoint: ProceedingJoinPoint) {
@@ -54,6 +62,16 @@ class AspectFastClick {
                 joinPoint.proceed()
             }
         } ?: run {
+            joinPoint.proceed()
+        }
+    }
+
+    @Around("methodAnnotated()")
+    fun aroundAnnotation(joinPoint: ProceedingJoinPoint) {
+        val signature = joinPoint.signature as MethodSignature
+        val name = signature.name
+        val declaringTypeName = signature.declaringTypeName
+        if (!Utils.isFastClick(name + declaringTypeName, FAST_CLICK_INTERVAL)) {
             joinPoint.proceed()
         }
     }
